@@ -23,7 +23,7 @@ ts-todo/
 mkdir ts-todo && cd ts-todo
 npm init -y
 npm install --save-dev typescript @types/node
-npx tsc --init
+npx tsc --init // or npm run tsRun ( add a script in package.json if you want to run  that package using npm)
 ```
 
 Update **`tsconfig.json`** (minimal for now):
