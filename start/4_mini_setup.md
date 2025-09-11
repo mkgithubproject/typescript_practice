@@ -185,6 +185,54 @@ You now have a simple **TypeScript CLI Todo app**! 🎉
 
 ---
 
-If you want, I can also **add a mini in-memory JSON database**, so todos persist between runs, making it a more “real” mini project.
+Ah, this is a common point of confusion! Let me break it down clearly.
 
-Do you want me to do that next?
+---
+
+### **Normal TypeScript Workflow**
+
+1. You write `.ts` files (TypeScript source code).
+2. TypeScript **cannot run directly in Node.js**, because Node only understands JavaScript.
+3. Normally, you **compile TypeScript to JavaScript** first:
+
+```bash
+npx tsc
+```
+
+* This generates `.js` files in the `outDir` (e.g., `dist/`).
+* Then you run Node on the compiled JS:
+
+```bash
+node dist/index.js
+```
+
+So the workflow is: **TypeScript → Compile → JavaScript → Run**.
+
+---
+
+### **What `ts-node` Does**
+
+`ts-node` **combines these two steps**:
+
+* You can **run `.ts` files directly**, without explicitly compiling them first.
+* Behind the scenes, `ts-node` **compiles TypeScript in memory** and immediately executes the result with Node.js.
+
+Example:
+
+```bash
+npx ts-node src/index.ts
+```
+
+* Node never sees the `.ts` file as a file on disk—it sees the compiled JS in memory.
+* Saves time in small projects or scripts because you don’t have to run `tsc` every time.
+
+---
+
+### **Key Points**
+
+* ✅ Great for development, quick testing, and small projects.
+* ❌ Not ideal for production; in production, you usually **pre-compile TypeScript** to JS for performance.
+
+---
+
+
