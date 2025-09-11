@@ -26,6 +26,85 @@ npm install --save-dev typescript @types/node
 npx tsc --init // or npm run tsRun ( add a script in package.json if you want to run  that package using npm)
 ```
 
+## alternate ways
+Great question ⚡ — you want to know what other ways you can run the **TypeScript compiler (`tsc`)** besides `npx tsc --init`. Let’s break it down:
+
+---
+
+# ⚡ Ways to Run `tsc`
+
+## 1. **If TypeScript is installed locally (recommended)**
+
+```bash
+npx tsc
+```
+
+👉 `npx` looks inside `node_modules/.bin/` and runs `tsc`.
+
+---
+
+## 2. **If TypeScript is installed globally**
+
+```bash
+npm install -g typescript
+tsc
+```
+
+👉 Then you can run `tsc` directly anywhere in your terminal.
+Example:
+
+```bash
+tsc --init
+```
+
+---
+
+## 3. **Using npm scripts (shortcut way)**
+
+In `package.json`:
+
+```json
+{
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  }
+}
+```
+
+Now you can run:
+
+```bash
+npm run build
+npm run watch
+```
+
+---
+
+## 4. **Direct path execution**
+
+If you don’t want to use `npx` or global install:
+
+```bash
+./node_modules/.bin/tsc
+```
+
+This runs the compiler from your local `node_modules`.
+
+---
+
+# ✅ Summary
+
+* `npx tsc` → safest (uses local version).
+* `tsc` → works if globally installed.
+* `npm run build` → clean way inside projects.
+* `./node_modules/.bin/tsc` → manual path execution.
+
+---
+
+👉 Do you want me to show you **which of these methods is best practice in real projects** (so you don’t run into version conflicts)?
+
+
 Update **`tsconfig.json`** (minimal for now):
 
 ```json
