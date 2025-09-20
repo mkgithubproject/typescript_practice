@@ -69,6 +69,97 @@ Node.js:       executes bcrypt at runtime
 
 ---
 
-If you want, I can draw a **small diagram showing exactly how TypeScript and Node pick `bcrypt` vs `@types/bcrypt`** — it’s very easy to remember visually.
+Exactly — here’s the precise distinction:
 
-Do you want me to draw that?
+---
+
+### `@types/bcrypt`
+
+* **Does NOT have the actual bcrypt code**.
+* **Only contains type definitions** (`.d.ts` files).
+* Example of what it contains:
+
+```ts
+declare module "bcrypt" {
+  export function genSalt(rounds?: number): Promise<string>;
+  export function hash(data: string, salt: string): Promise<string>;
+  export function compare(data: string, encrypted: string): Promise<boolean>;
+}
+```
+
+* It **cannot hash passwords or do anything at runtime**.
+* Its sole purpose is **TypeScript type checking and editor autocomplete**.
+
+---
+
+### `bcrypt`
+
+* **Contains the real, executable library code**.
+* This is what actually performs hashing and comparison.
+* This is the library Node.js will execute when you call:
+
+```ts
+const hash = await bcrypt.hash("password123", 10);
+```
+
+---
+
+✅ **Key point:**
+
+* `bcrypt` = full working library → **runtime + development**
+* `@types/bcrypt` = type info only → **development only**, no runtime code
+
+---
+
+Ah! This is a critical scenario — let’s break it down carefully.
+
+---
+
+### 1️⃣ What happens if you **only install `@types/bcrypt`**
+
+* TypeScript will **think `bcrypt` exists** because it reads the type definitions from `@types/bcrypt`.
+* Your editor will show **no type errors** when you write code like:
+
+```ts
+import bcrypt from "bcrypt";
+
+const hash = await bcrypt.hash("password123", 10);
+```
+
+* **BUT at runtime**, Node.js will try to load `bcrypt` **and fail**, because there is **no actual code**.
+
+You’ll get an error like:
+
+```
+Error: Cannot find module 'bcrypt'
+```
+
+---
+
+### 2️⃣ Why this happens
+
+* `@types/bcrypt` only provides `.d.ts` files — **no executable code**.
+* TypeScript uses them for **type checking only**, it does not create or include the real library in the compiled JS.
+* Node.js runs the JS code; if the actual library (`bcrypt`) is missing, it **cannot execute anything**.
+
+---
+
+### ✅ Summary
+
+| Scenario                       | TypeScript                                       | Runtime                               |
+| ------------------------------ | ------------------------------------------------ | ------------------------------------- |
+| Only `@types/bcrypt` installed | ✅ Code compiles (type checking works)            | ❌ Fails at runtime (module not found) |
+| Only `bcrypt` installed        | ❌ TypeScript shows type errors / no autocomplete | ✅ Works at runtime                    |
+| Both installed                 | ✅ TypeScript + ✅ Runtime                         | ✅ Works perfectly                     |
+
+---
+
+So, **you must install `bcrypt`** if you want your code to actually run.
+`@types/bcrypt` is just optional, for TypeScript type safety.
+
+---
+
+If you want, I can make a **tiny diagram showing exactly what happens when you install only one of them vs both** — it clears this up instantly.
+
+Do you want me to do that?
+
