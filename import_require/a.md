@@ -86,6 +86,75 @@ const express = require('express');
 
 ---
 
-If you want, I can make a **diagram showing how `import` in TypeScript compiles to `require()` in Node.js**, which makes the difference crystal clear.
+In JavaScript (and TypeScript), `export default` is used to **export a single value, function, or class as the “default” export from a module**. This allows other files to import it without using curly braces. Let me break it down:
 
-Do you want me to do that?
+---
+
+### 1. **Basic Syntax**
+
+```javascript
+// myModule.js
+export default function greet() {
+  console.log("Hello!");
+}
+```
+
+Here, the `greet` function is the default export of `myModule.js`.
+
+---
+
+### 2. **Importing a Default Export**
+
+When you import a default export, you **don’t need curly braces**, and you can choose any name:
+
+```javascript
+// anotherFile.js
+import sayHello from './myModule.js';
+
+sayHello(); // Output: Hello!
+```
+
+Notice that `sayHello` is **not required to match the original function name `greet`**. That’s the special thing about default exports.
+
+---
+
+### 3. **Default Export with a Variable or Class**
+
+```javascript
+// myClass.js
+export default class Person {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+// usage
+import User from './myClass.js';
+const u = new User("Mohit");
+console.log(u.name); // Mohit
+```
+
+---
+
+### 4. **Difference from Named Exports**
+
+* **Named export:** `export const name = "Mohit";` → must import with the same name `{ name }`.
+* **Default export:** `export default name;` → can import with any name.
+
+```javascript
+// named export
+export const name = "Mohit";
+
+// usage
+import { name } from './file.js'; // must match the exported name
+
+// default export
+export default "Mohit";
+
+// usage
+import myName from './file.js'; // name can be anything
+```
+
+---
+
+
