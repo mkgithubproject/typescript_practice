@@ -497,6 +497,58 @@ console.log(users);
 ---
 
 
+Exactly! You’ve summarized the main TypeORM patterns very well. Let me complete the picture by including **QueryRunner** clearly and explain **when/why you’d use each**:
+
+| Approach                       | Description                                                              | Pros                                                     | Cons                                                 | Use Case                                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------ | -------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **BaseEntity**                 | Entities extend `BaseEntity` and can call `.save()`, `.find()`, etc.     | Easiest, Active Record style, minimal boilerplate        | Less flexible, harder to test, tightly coupled to DB | Small projects, prototypes                                                                                   |
+| **EntityManager**              | Use `manager` to perform operations on any entity                        | Generic, flexible, can handle multiple entities          | Less explicit, can be verbose                        | Complex operations needing multiple entities in one transaction                                              |
+| **Repository / getRepository** | Use `getRepository(Entity)` to get a dedicated repository for one entity | Explicit, clean, testable, good abstraction              | Slightly more boilerplate                            | Production apps, large projects, maintainable code                                                           |
+| **QueryRunner**                | Low-level DB access, full control over connections and transactions      | Full control, explicit transactions, can execute raw SQL | Verbose, manual connection management                | Complex transactional operations, multi-step DB processes, migrations, or when you need fine-grained control |
+
+---
+
+### **When to use QueryRunner specifically**
+
+1. **Transactions spanning multiple operations**:
+
+   ```ts
+   const queryRunner = dataSource.createQueryRunner();
+   await queryRunner.startTransaction();
+   try {
+       await queryRunner.manager.save(User, userData);
+       await queryRunner.manager.save(Order, orderData);
+       await queryRunner.commitTransaction();
+   } catch (err) {
+       await queryRunner.rollbackTransaction();
+   } finally {
+       await queryRunner.release();
+   }
+   ```
+2. **Raw SQL execution** for performance or complex queries:
+
+   ```ts
+   await queryRunner.query(`UPDATE user SET age = $1 WHERE id = $2`, [30, 1]);
+   ```
+3. **Custom transaction logic** that can’t easily be expressed with BaseEntity/Repository.
+
+---
+
+💡 **Rule of thumb**:
+
+* Small/simple CRUD → **BaseEntity**
+* Standard production-level app → **Repository / getRepository**
+* Multi-entity transactions → **EntityManager** or **QueryRunner**
+* Complex, low-level, multi-step DB operations → **QueryRunner**
+
+---
+
+If you want, I can make a **diagram showing all 4 approaches** with arrows showing how they relate and when to pick each — it’s super handy for understanding in one glance.
+
+Do you want me to make that diagram?
+
+
+
 
 
 
