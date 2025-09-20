@@ -349,5 +349,76 @@ npx ts-node src/index.ts
 ---
 
 
+Ah! This is a very common TypeScript question, and the reason is **how TypeScript handles type declaration files (`@types/...`) automatically**. Let me explain carefully.
+
+---
+
+## 1. **Type Declarations Are “Linked” to the Package**
+
+When you install `express`:
+
+```bash
+npm i express
+npm i -D @types/express
+```
+
+* `express` → runtime JavaScript code.
+* `@types/express` → type definitions for TypeScript.
+
+Now, **you don’t ever import from `@types/express`**. Why? Because **TypeScript automatically picks up the type declarations when you import the actual package**.
+
+---
+
+### 2. **How TypeScript Resolves Types**
+
+When you write:
+
+```ts
+import { Request, Response } from 'express';
+```
+
+TypeScript does this internally:
+
+1. Looks in the **`express` package** for type info.
+2. Finds no `.ts` or `.d.ts` in `express` itself?
+3. Looks in **`@types/express`** automatically (because `@types` packages are linked to the real package).
+
+So `Request` and `Response` **come from the type declaration file**, but you don’t import them from `@types/express` manually.
+
+---
+
+### 3. **Why Not Import Directly from @types/express?**
+
+* `@types/express` is **not meant to be imported**. It’s **just a helper for TypeScript**.
+* It only exists to tell TypeScript: “When someone imports from `'express'`, here are the types.”
+* At runtime, `@types/express` **does not exist**, so if you tried:
+
+```ts
+import { Request } from '@types/express'; // ❌ This will fail at runtime
+```
+
+You’d get an error: module not found.
+
+---
+
+### 4. **Analogy**
+
+* **`express`** → the real car you drive (runtime)
+* **`@types/express`** → the manual and blueprint telling you how to drive (compile-time)
+* You always “import the car,” and TypeScript **reads the manual automatically**.
+
+---
+
+### ✅ Key Point
+
+> **Always import types from the runtime package (`express`), not from `@types/...`).**
+> TypeScript automatically links the `.d.ts` files from `@types` behind the scenes.
+
+---
+
+If you want, I can make a **diagram showing runtime vs types vs import resolution**, which makes this crystal clear.
+
+Do you want me to draw that?
+
 
 
