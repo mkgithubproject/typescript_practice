@@ -234,5 +234,78 @@ npx ts-node src/index.ts
 * ❌ Not ideal for production; in production, you usually **pre-compile TypeScript** to JS for performance.
 
 ---
+The error means that **TypeScript is not installed globally** on your system, so the `tsc` (TypeScript compiler) command is not available in your terminal.
+
+Here’s how you can fix it:
+
+---
+
+### 1. Install TypeScript globally
+
+Run this command:
+
+```bash
+npm install -g typescript
+```
+
+Then verify:
+
+```bash
+tsc -v
+```
+
+---
+
+### 2. Install TypeScript locally (project-level)
+
+If you only want TypeScript for your project (recommended for team projects):
+
+```bash
+npm install --save-dev typescript
+```
+
+Now, you won’t be able to run `tsc` directly unless you use **npx**:
+
+```bash
+npx tsc -v
+```
+
+---
+
+### 3. Initialize TypeScript in your project
+
+Inside your project folder, run:
+
+```bash
+npx tsc --init
+```
+
+This creates a `tsconfig.json` file so you can customize compiler settings.
+
+---
+
+⚡ Since you’re using **MacBook Air M2** with zsh, if you installed globally but `tsc` still doesn’t work, it means your **npm global bin path** is not in your shell’s `$PATH`.
+You can check with:
+
+```bash
+npm bin -g
+```
+
+If it shows something like `/opt/homebrew/lib/node_modules/npm/bin`, add it to your path in `~/.zshrc`:
+
+```bash
+export PATH=$PATH:/opt/homebrew/bin
+```
+
+Then reload:
+
+```bash
+source ~/.zshrc
+```
+
+---
+
+
+
 
 
