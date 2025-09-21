@@ -167,6 +167,130 @@ Interfaces and Type Aliases are **core to TypeScript**, and they become extremel
 
 ---
 
-Next, we can move to **Generics in TypeScript**, which is the **next step in your roadmap** after mastering interfaces and type aliases.
+Perfect! Let’s focus on **Interfaces in TypeScript** exactly according to your roadmap:
 
-Do you want to go to **Generics** next?
+# **4️⃣ Interfaces in TypeScript**
+
+Interfaces are **contracts** that define the **shape of an object**, including properties, methods, and types.
+
+---
+
+## **A. Defining Object Types**
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const user1: User = {
+  id: 1,
+  name: "Mohit",
+  email: "mohit@example.com"
+};
+```
+
+✅ Key points:
+
+* `interface` defines the **structure** of an object.
+* Helps **type-check objects** at compile time.
+
+---
+
+## **B. Optional Properties**
+
+* Use `?` to mark properties as optional.
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  email?: string; // optional
+}
+
+const user2: User = {
+  id: 2,
+  name: "Rohit"
+  // email is optional
+};
+```
+
+* Optional properties **may or may not be present**.
+
+---
+
+## **C. Readonly Properties**
+
+* Use `readonly` to make properties **immutable** after initialization.
+
+```ts
+interface User {
+  readonly id: number;
+  name: string;
+}
+
+const user3: User = { id: 101, name: "Mohit" };
+user3.name = "Rohit"; // ✅ allowed
+// user3.id = 102; // ❌ Error: Cannot assign to 'id' because it is readonly
+```
+
+---
+
+## **D. Function Types in Interfaces**
+
+Interfaces can define **function signatures** inside objects.
+
+```ts
+interface Calculator {
+  add(a: number, b: number): number;
+  subtract(a: number, b: number): number;
+}
+
+const calc: Calculator = {
+  add(a, b) {
+    return a + b;
+  },
+  subtract(a, b) {
+    return a - b;
+  }
+};
+
+console.log(calc.add(5, 3));      // 8
+console.log(calc.subtract(5, 3)); // 2
+```
+
+* Also, interfaces can define **standalone function types**:
+
+```ts
+interface GreetFunc {
+  (name: string, title?: string): string;
+}
+
+const greet: GreetFunc = (name, title) =>
+  title ? `Hello ${title} ${name}` : `Hello ${name}`;
+
+console.log(greet("Mohit"));       // Hello Mohit
+console.log(greet("Mohit", "Mr.")); // Hello Mr. Mohit
+```
+
+---
+
+### ✅ **Summary Table**
+
+| Feature                  | Syntax / Example                                 | Notes                            |
+| ------------------------ | ------------------------------------------------ | -------------------------------- |
+| Object Type              | `interface User { id: number; name: string }`    | Defines shape of object          |
+| Optional Property        | `email?: string`                                 | May or may not exist             |
+| Readonly Property        | `readonly id: number`                            | Cannot be reassigned             |
+| Function Types           | `add(a: number, b: number): number`              | Methods in interface             |
+| Standalone Function Type | `interface GreetFunc { (name: string): string }` | Function signature for variables |
+
+---
+
+This fully covers **Interfaces** according to your roadmap.
+
+Next in the roadmap, we can cover **Type Aliases**, which are often used for **custom types, unions, intersections, and tuples**.
+
+Do you want me to move to **Type Aliases** next?
+
