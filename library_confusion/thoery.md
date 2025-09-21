@@ -415,10 +415,111 @@ You’d get an error: module not found.
 > TypeScript automatically links the `.d.ts` files from `@types` behind the scenes.
 
 ---
+Good question 👍 You’re asking how **`@types/express` (the DefinitelyTyped package) is linked with the `express` library internally** when we import things like this:
 
-If you want, I can make a **diagram showing runtime vs types vs import resolution**, which makes this crystal clear.
+```ts
+import { Request, Response } from "express";
+```
 
-Do you want me to draw that?
+Let’s unpack step by step:
+
+---
+
+## 1. **Express is written in JavaScript**
+
+* The `express` npm package is **pure JavaScript** (no TypeScript).
+* That means it doesn’t ship its own `.d.ts` type definitions.
+
+So, TypeScript needs a separate type declaration package.
+
+---
+
+## 2. **Type definitions live in `@types/express`**
+
+* The community maintains `@types/express` (via DefinitelyTyped).
+* Inside that package, you’ll find `.d.ts` files like:
+
+```ts
+// index.d.ts (simplified)
+declare namespace Express {
+  interface Request {
+    query: any;
+    body: any;
+    params: any;
+  }
+
+  interface Response {
+    json: (body: any) => Response;
+    send: (body: any) => Response;
+  }
+}
+```
+
+This tells TypeScript the *shape* of `Request`, `Response`, etc.
+
+---
+
+## 3. **TypeScript resolution mechanism**
+
+Here’s the magic part:
+
+* When you write:
+
+  ```ts
+  import { Request, Response } from "express";
+  ```
+* TypeScript looks for a `types` entry in `express`’s `package.json`.
+* If not found (true for `express`), it looks in `node_modules/@types/express`.
+* It automatically merges the type definitions with the real JS code of `express`.
+
+At runtime:
+
+* `express` provides the actual **functions/objects** (`req`, `res`).
+* TypeScript erases all types, but during development, it uses `@types/express` to give you IntelliSense, autocomplete, and compile-time checks.
+
+---
+
+## 4. **How both are linked**
+
+Think of it like this:
+
+* `express` → actual JS runtime behavior (functions, objects).
+* `@types/express` → TypeScript "labels" that describe what those functions/objects look like.
+* When you import from `"express"`, TypeScript combines:
+
+  * JS runtime exports from `express` package.
+  * Type definitions from `@types/express`.
+
+---
+
+✅ **Example:**
+
+```ts
+import express, { Request, Response } from "express";
+
+const app = express();
+
+app.get("/user/:id", (req: Request, res: Response) => {
+  // Here TS knows req.params is an object
+  res.json({ id: req.params.id });
+});
+```
+
+* At runtime → only `express` (JS) is running.
+* During development → `@types/express` makes sure you don’t misuse `req` or `res`.
+
+---
+
+👉 So to summarize:
+
+* `express` = runtime code (JS).
+* `@types/express` = compile-time type descriptions.
+* TypeScript **automatically wires them together** using its module resolution system.
+
+---
+
+Do you want me to show you **step-by-step how TypeScript picks up `@types/express` when you import from `express`** (like looking into `node_modules` and resolution order)?
+
 
 
 
