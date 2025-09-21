@@ -288,9 +288,166 @@ console.log(greet("Mohit", "Mr.")); // Hello Mr. Mohit
 
 ---
 
-This fully covers **Interfaces** according to your roadmap.
+Ah! That’s an important distinction. In TypeScript:
 
-Next in the roadmap, we can cover **Type Aliases**, which are often used for **custom types, unions, intersections, and tuples**.
+* **Classes cannot extend interfaces** like they do with classes in Java.
+* **Classes implement interfaces** instead.
 
-Do you want me to move to **Type Aliases** next?
+---
+
+## **A. Implementing an Interface (Not Extending)**
+
+```ts
+interface Person {
+  id: number;
+  name: string;
+  display(): void;
+}
+
+// Class implements the interface
+class User implements Person {
+  constructor(public id: number, public name: string) {}
+
+  display(): void {
+    console.log(`User: ${this.name} (ID: ${this.id})`);
+  }
+}
+
+const user = new User(1, "Mohit");
+user.display(); // User: Mohit (ID: 1)
+```
+
+✅ Key points:
+
+* `implements` enforces that the **class must have all properties and methods defined in the interface**.
+* A class **cannot use `extends` with an interface**; `extends` is only for **class inheritance**.
+
+---
+
+## **B. Implementing Multiple Interfaces**
+
+```ts
+interface Contact {
+  email: string;
+  phone: string;
+}
+
+interface Employee extends Person {
+  department: string;
+}
+
+// Class can implement multiple interfaces
+class Staff implements Employee, Contact {
+  constructor(
+    public id: number,
+    public name: string,
+    public department: string,
+    public email: string,
+    public phone: string
+  ) {}
+
+  display(): void {
+    console.log(`${this.name} works in ${this.department}`);
+  }
+}
+
+const staff = new Staff(1, "Rohit", "IT", "rohit@example.com", "1234567890");
+staff.display(); // Rohit works in IT
+```
+
+✅ Key points:
+
+* Use `implements` to **enforce multiple interfaces**.
+* All properties/methods in the interfaces must exist in the class.
+
+---
+
+### **Summary**
+
+| Concept                  | Java          | TypeScript                             |
+| ------------------------ | ------------- | -------------------------------------- |
+| Class inherits class     | `extends`     | `extends`                              |
+| Class inherits interface | `implements`  | `implements` (cannot use `extends`)    |
+| Multiple inheritance     | ❌ not allowed | ✅ via interfaces (implements multiple) |
+
+---
+Yes, **interfaces in TypeScript are conceptually very similar to interfaces in Java**, but there are some differences in syntax and flexibility. Let me break it down clearly:
+
+---
+
+## **1️⃣ Similarities**
+
+| Feature                | Java Interface                                     | TypeScript Interface                                        |
+| ---------------------- | -------------------------------------------------- | ----------------------------------------------------------- |
+| Contract definition    | `interface` defines methods a class must implement | Same, defines properties & methods a class must implement   |
+| Implemented by classes | `class MyClass implements MyInterface`             | `class MyClass implements MyInterface`                      |
+| Method signatures      | Only signatures, no method body                    | Only signatures (optional: can include optional properties) |
+| Multiple inheritance   | A class can implement multiple interfaces          | Same, a class can implement multiple interfaces             |
+
+### Example Comparison
+
+**Java:**
+
+```java
+interface Person {
+    void display();
+}
+
+class User implements Person {
+    public void display() {
+        System.out.println("Hello");
+    }
+}
+```
+
+**TypeScript:**
+
+```ts
+interface Person {
+    name: string;
+    display(): void;
+}
+
+class User implements Person {
+    constructor(public name: string) {}
+    
+    display(): void {
+        console.log(`Hello, ${this.name}`);
+    }
+}
+```
+
+✅ In both languages:
+
+* The interface acts as a **contract**.
+* The class **must implement all properties/methods** defined in the interface.
+
+---
+
+## **2️⃣ Key Differences**
+
+| Aspect                                 | Java                                | TypeScript                                                                 |
+| -------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------- |
+| Properties in interfaces               | Cannot have fields (only constants) | Can define properties with types                                           |
+| Optional properties                    | ❌ not supported                     | ✅ supported using `?`                                                      |
+| Readonly properties                    | ❌ not supported                     | ✅ supported using `readonly`                                               |
+| Can extend multiple interfaces         | ✅                                   | ✅ (with `extends`)                                                         |
+| Can define function type outside class | ❌ only methods in interface         | ✅ standalone function types supported                                      |
+| Default implementations                | Java 8+: `default` keyword          | TypeScript: cannot define body in interface (use abstract class if needed) |
+
+---
+
+### **3️⃣ Summary**
+
+* **Interfaces in TypeScript ≈ Interfaces in Java** in purpose: a **contract for classes**.
+* **Differences** mostly come from TypeScript being a superset of JavaScript:
+
+  * Supports **optional & readonly properties**.
+  * Can define **function types**.
+  * Can extend multiple interfaces easily.
+
+---
+
+
+
 
