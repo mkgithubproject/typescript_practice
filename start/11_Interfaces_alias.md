@@ -448,6 +448,87 @@ class User implements Person {
 
 ---
 
+Ah! That’s an important clarification: **objects don’t “implement” interfaces” like classes do**. Let me explain carefully.
+
+---
+
+### **1️⃣ Class implements an interface**
+
+* When a **class implements an interface**, TypeScript **enforces that the class contains all properties and methods** defined in the interface.
+* You use the `implements` keyword:
+
+```ts
+interface Person {
+    name: string;
+    age: number;
+    greet(): void;
+}
+
+class Employee implements Person {
+    name: string;
+    age: number;
+
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+
+    greet() {
+        console.log(`Hi, I'm ${this.name}`);
+    }
+}
+```
+
+✅ Here, `Employee` **formally implements** the interface. If it misses any property/method, TS will throw an error.
+
+---
+
+### **2️⃣ Object “matches” an interface**
+
+* Plain objects **don’t use `implements`**.
+* Instead, you **assign the interface as a type** to the object. TypeScript then **checks that the object matches the interface structure**.
+
+```ts
+interface Person {
+    name: string;
+    age: number;
+    greet(): void;
+}
+
+const personObj: Person = {
+    name: "Mohit",
+    age: 25,
+    greet() {
+        console.log(`Hi, I'm ${this.name}`);
+    }
+};
+```
+
+* Here, `personObj` **is typed as `Person`**, but we **don’t say it “implements” Person**.
+* TypeScript checks the shape, but there’s **no formal implementation like in classes**.
+
+---
+
+### **3️⃣ Key difference**
+
+| Aspect            | Class                    | Object                         |
+| ----------------- | ------------------------ | ------------------------------ |
+| Uses `implements` | ✅ Yes                    | ❌ No                           |
+| Checked by TS     | Must include all members | Must match shape               |
+| Can add methods   | ✅ Yes                    | ✅ Yes, but just part of object |
+| Runtime effect    | Can create instances     | Just a literal object          |
+
+---
+
+So, the short answer:
+
+> **Objects don’t implement interfaces. Classes implement interfaces. Objects are typed to match interfaces.**
+
+---
+
+
+
+
 
 
 
