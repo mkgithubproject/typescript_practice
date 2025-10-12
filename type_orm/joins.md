@@ -763,5 +763,148 @@ INSERT INTO "post" ("title", "author_id") VALUES ('Custom FK Example', 1);
 
 ---
 
-Would you like me to show you how to **rename both sides’ constraints** too (like giving your foreign key constraint a custom name, not just the column)? It’s the next level of control.
+💯 Perfect — now you’re thinking like a **TypeORM power user** 🔥
+
+Let’s go step by step on **how to rename the foreign key column** (instead of letting TypeORM auto-generate something like `userId`).
+
+---
+
+## 🧩 Default Behavior Recap
+
+Normally, this:
+
+```ts
+@ManyToOne(() => User, (user) => user.posts)
+user: User;
+```
+
+creates:
+
+```
+userId → references user.id
+```
+
+---
+
+## ✅ To control the foreign key column name yourself
+
+You use the **`@JoinColumn()`** decorator — it’s always used **on the owning side** (`@ManyToOne`).
+
+Example 👇
+
+```ts
+@ManyToOne(() => User, (user) => user.posts)
+@JoinColumn({ name: 'author_id' }) // 👈 custom FK column name
+user: User;
+```
+
+---
+
+## 🧱 Full Example
+
+```ts
+// user.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Post } from './post.entity';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
+}
+```
+
+```ts
+// post.entity.ts
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from './user.entity';
+
+@Entity()
+export class Post {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  title: string;
+
+  @ManyToOne(() => User, (user) => user.posts)
+  @JoinColumn({ name: 'author_id' }) // 👈 foreign key column will be "author_id"
+  user: User;
+}
+```
+
+---
+
+## 🧠 TypeORM Generates This Table (PostgreSQL)
+
+```sql
+CREATE TABLE "post" (
+  "id" SERIAL PRIMARY KEY,
+  "title" VARCHAR NOT NULL,
+  "author_id" INTEGER, -- 👈 our custom FK column name
+  CONSTRAINT "FK_post_author"
+    FOREIGN KEY ("author_id") REFERENCES "user" ("id")
+);
+```
+
+---
+
+## 🧩 You can even customize the referenced column
+
+If your `User` table’s primary key isn’t `id`,
+for example, you want to reference `email` instead:
+
+```ts
+@ManyToOne(() => User)
+@JoinColumn({ name: 'author_email', referencedColumnName: 'email' })
+user: User;
+```
+
+→ This will create:
+
+```
+post.author_email → references user.email
+```
+
+---
+
+## ⚙️ Example Data Flow
+
+```ts
+const user = new User();
+user.name = 'Alice';
+await userRepo.save(user);
+
+const post = new Post();
+post.title = 'Custom FK Example';
+post.user = user;
+await postRepo.save(post);
+```
+
+Internally executed SQL:
+
+```sql
+INSERT INTO "user" ("name") VALUES ('Alice') RETURNING "id";
+INSERT INTO "post" ("title", "author_id") VALUES ('Custom FK Example', 1);
+```
+
+---
+
+## 🧭 TL;DR Summary
+
+| Task                     | Decorator                                                       | Example                   |
+| ------------------------ | --------------------------------------------------------------- | ------------------------- |
+| Change FK column name    | `@JoinColumn({ name: 'my_fk' })`                                | → column becomes `my_fk`  |
+| Change referenced column | `@JoinColumn({ name: 'my_fk', referencedColumnName: 'email' })` | → references `user.email` |
+
+---
+
+
+
 
